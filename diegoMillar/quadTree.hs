@@ -38,3 +38,17 @@ divRegion f1 f2 l ps (xo,yo) = filter (\(x,y) -> if(f1 (fromIntegral x) nl && f2
 			where
 			    nl = (/2) $ fromIntegral l
 		 	    f3 = (\(x,y) -> (x-xo,y-yo))
+
+checkColision :: (Int,Int) -> Int -> (Int,Int) -> Bool
+checkColision (px,py) r (opx,opy) 
+    | sqrt ((fromIntegral (opx-px))**2 + (fromIntegral (opy-py))**2) < (fromIntegral (r*2)) = True
+    | otherwise = False
+
+-- colQT :: quadTree con particulas -> radio -> origen -> lista de colisiones
+colQT :: QT (Int,Int) [(Int,Int)] -> Int -> (Int,Int) -> [[(Int,Int)]]
+colQT (L lista) r (ox,oy) = map (colision lista r) lista 
+colQT (N (x,y) a b c d) r (ox,oy) = colQT a r (x+ox,y+oy) ++ colQT b r (x+ox,y+oy) ++ colQT c r (x+ox,y+oy) ++ colQT d r (x+ox,y+oy)
+
+-- colision :: lista de particulas -> particula -> radio -> lista de colisiones
+colision :: [(Int,Int)] -> Int -> (Int,Int) -> [(Int,Int)]
+colision ps r p = filter (checkColision p r) ps
